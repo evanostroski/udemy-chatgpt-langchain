@@ -1,35 +1,28 @@
-from langchain.chat_models import ChatOpenAI
-from langchain.chains import LLMChain
-from langchain.prompts import MessagesPlaceholder, HumanMessagePromptTemplate, ChatPromptTemplate
-from langchain.memory import ConversationSummaryMemory
+
+from langchain.document_loaders import TextLoader
+from langchain.embeddings import OpenAIEmbeddings
+from langchain.text_splitter import CharacterTextSplitter
 from dotenv import load_dotenv
 
 load_dotenv()
 
-chat = ChatOpenAI(verbose=True)
+embeddings = OpenAIEmbeddings()
 
-memory = ConversationSummaryMemory(
-    memory_key="messages", 
-    return_messages=True,
-    llm=chat)
+emb = embeddings.embed_query("What does the fox say?")
 
-prompt = ChatPromptTemplate(
-    input_variables=["content", "messages"],
-    messages=[
-        MessagesPlaceholder(variable_name="messages"),
-        HumanMessagePromptTemplate.from_template("{content}")
-    ]
+print(emb)
+
+""" text_splitter = CharacterTextSplitter (
+    separator="\n",
+    chunk_size=200,
+    chunk_overlap=0
 )
 
-chain = LLMChain(
-    memory=memory,
-    llm=chat,
-    prompt=prompt,
-    verbose=True
+loader = TextLoader("facts.txt")
+docs = loader.load_and_split(
+    text_splitter=text_splitter
 )
-while True:
-    content = input(">> ")
 
-    result = chain({"content": content})
-
-    print(result["text"])
+for doc in docs:
+    print(doc.page_content)
+    print("\n") """
