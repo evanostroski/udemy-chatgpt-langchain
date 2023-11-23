@@ -12,10 +12,14 @@ from dotenv import load_dotenv
 
 from tools.sql import run_query_tool, list_tables, describe_tables_tool
 from tools.report import write_report_tool
+from handlers.chat_model_start_handler import ChatModelStartHandler
 
 load_dotenv()
 
-chat = ChatOpenAI()
+handler = ChatModelStartHandler()
+chat = ChatOpenAI(
+    callbacks=[handler]
+)
 
 tables = list_tables()
 
@@ -49,7 +53,7 @@ agent = OpenAIFunctionsAgent(
 
 agent_executer = AgentExecutor(
     agent=agent,
-    verbose=True,
+    # verbose=True,
     tools=tools,
     memory=memory
 )
@@ -60,6 +64,7 @@ agent_executer = AgentExecutor(
 agent_executer(
     "How many orders are there? Write the result to an html report"
 )
+
 agent_executer(
     "Repeat the exact same process for users."
 )
