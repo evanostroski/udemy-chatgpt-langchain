@@ -1,6 +1,6 @@
 import os
 import pinecone
-from langchain.vectorstores import Pinecone 
+from langchain.vectorstores import Pinecone
 from app.chat.embeddings.openai import embeddings
 
 pinecone.init(
@@ -9,12 +9,14 @@ pinecone.init(
 )
 
 vector_store = Pinecone.from_existing_index(
-    os.getenv("PINECONE_INDEX_NAME"),
-    embeddings
+    os.getenv("PINECONE_INDEX_NAME"), embeddings
 )
 
 def build_retriever(chat_args):
-    search_kwargs = {"filter": { "pdf_id": chat_args.pdf_id }}
+    search_kwargs = {
+        "filter": { "pdf_id": chat_args.pdf_id }
+    }
     return vector_store.as_retriever(
         search_kwargs=search_kwargs
     )
+
